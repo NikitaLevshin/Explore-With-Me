@@ -12,7 +12,9 @@ import ru.yandex.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -50,6 +52,8 @@ public class StatsServiceImpl implements StatsService {
                 stats.addAll(statsRepository.findStat(start, end));
             }
         }
-        return stats;
+        return stats.stream()
+                .sorted(Comparator.comparing(ResponseDto::getHits).reversed())
+                .collect(Collectors.toList());
     }
 }
