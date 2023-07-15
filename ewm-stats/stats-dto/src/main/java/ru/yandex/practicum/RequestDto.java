@@ -16,5 +16,5 @@ public class RequestDto {
     private String uri;
     private String ip;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime creationDate;
+    private LocalDateTime creationDate;
 }

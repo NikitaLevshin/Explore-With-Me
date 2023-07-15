@@ -19,5 +19,5 @@ public class Stats {
     private String uri;
     private String ip;
     @Column(name = "creation_date")
-    LocalDateTime creationDate;
+    private LocalDateTime creationDate;
 }

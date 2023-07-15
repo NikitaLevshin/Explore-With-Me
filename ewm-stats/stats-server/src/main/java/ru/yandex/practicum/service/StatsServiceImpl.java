@@ -12,6 +12,7 @@ import ru.yandex.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,27 +34,19 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public List<ResponseDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         log.info("Вызван метод getStats");
-        List<ResponseDto> stats = new ArrayList<>();
         if (start.isAfter(end)) throw new WrongTimeException("Время старта не может быть позже времени окончания");
         if (uris != null && !uris.isEmpty()) {
             if (unique) {
-                for (String uri : uris) {
-                    stats.addAll(statsRepository.findByUniqueUri(start, end, uri));
-                }
+                    return statsRepository.findByUniqueUri(start, end, uris);
             } else {
-                for (String uri : uris) {
-                    stats.addAll(statsRepository.findByUri(start, end, uri));
-                }
+                    return statsRepository.findByUri(start, end, uris);
             }
         } else {
             if (unique) {
-                stats.addAll(statsRepository.findUniqueStat(start, end));
+                return statsRepository.findUniqueStat(start, end);
             } else {
-                stats.addAll(statsRepository.findStat(start, end));
+                return statsRepository.findStat(start, end);
             }
         }
-        return stats.stream()
-                .sorted(Comparator.comparing(ResponseDto::getHits).reversed())
-                .collect(Collectors.toList());
     }
 }

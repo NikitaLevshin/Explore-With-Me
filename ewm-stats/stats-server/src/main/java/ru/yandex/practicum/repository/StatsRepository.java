@@ -11,33 +11,31 @@ import java.util.List;
 
 @Repository
 public interface StatsRepository extends JpaRepository<Stats, Long> {
-    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(s.app)) " +
+    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(distinct s.ip)) " +
             "from Stats as s " +
-            "where s.uri like concat(?3, '%') and creation_date between ?1 and ?2 " +
+            "where s.uri in(?3) and creation_date between ?1 and ?2 " +
             "group by s.app, s.uri " +
-            "having count(s.ip) = 1 " +
-            "order by count(s.app) desc ")
-    List<ResponseDto> findByUniqueUri(LocalDateTime start, LocalDateTime end, String uri);
+            "order by count(distinct s.ip) desc ")
+    List<ResponseDto> findByUniqueUri(LocalDateTime start, LocalDateTime end, List uri);
 
-    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(s.app)) " +
+    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(s.ip)) " +
             "from Stats as s " +
-            "where s.uri like ?3 and creation_date between ?1 and ?2 " +
+            "where s.uri in(?3) and creation_date between ?1 and ?2 " +
             "group by s.app, s.uri " +
-            "order by count(s.app) desc ")
-    List<ResponseDto> findByUri(LocalDateTime start, LocalDateTime end, String uri);
+            "order by count(s.ip) desc ")
+    List<ResponseDto> findByUri(LocalDateTime start, LocalDateTime end, List uri);
 
-    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(s.app)) " +
+    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(distinct s.ip)) " +
             "from Stats as s " +
             "where creation_date between ?1 and ?2 " +
             "group by s.app, s.uri " +
-            "having count(s.ip) = 1 " +
-            "order by count(s.app) desc ")
+            "order by count(distinct s.ip) desc ")
     List<ResponseDto> findUniqueStat(LocalDateTime start, LocalDateTime end);
 
-    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(s.app)) " +
+    @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(s.ip)) " +
             "from Stats as s " +
             "where creation_date between ?1 and ?2 " +
             "group by s.app, s.uri " +
-            "order by count(s.app) desc ")
+            "order by count(s.ip) desc ")
     List<ResponseDto> findStat(LocalDateTime start, LocalDateTime end);
 }

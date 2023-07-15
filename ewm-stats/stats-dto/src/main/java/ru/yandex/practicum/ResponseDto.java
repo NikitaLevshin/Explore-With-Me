@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class ResponseDto {
     private String app;
     private String uri;
-    Long hits;
+    private Long hits;
 }
