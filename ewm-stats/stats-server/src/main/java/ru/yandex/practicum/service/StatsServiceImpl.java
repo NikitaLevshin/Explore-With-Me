@@ -11,11 +11,7 @@ import ru.yandex.practicum.mapper.StatsMapper;
 import ru.yandex.practicum.repository.StatsRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
