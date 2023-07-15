@@ -35,7 +35,7 @@ public class StatsServiceImpl implements StatsService {
         log.info("Вызван метод getStats");
         List<ResponseDto> stats = new ArrayList<>();
         if (start.isAfter(end)) throw new WrongTimeException("Время старта не может быть позже времени окончания");
-        if (!uris.isEmpty()) {
+        if (uris != null && !uris.isEmpty()) {
             if (unique) {
                 for (String uri : uris) {
                     stats.addAll(statsRepository.findByUniqueUri(start, end, uri));
