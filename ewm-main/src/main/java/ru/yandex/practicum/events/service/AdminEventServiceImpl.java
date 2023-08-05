@@ -21,9 +21,10 @@ import ru.yandex.practicum.exceptions.WrongArgumentException;
 import ru.yandex.practicum.exceptions.WrongStateException;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.utils.Constants.DATE_TIME_FORMATTER;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class AdminEventServiceImpl implements AdminEventService {
     private final PublicCategoryService publicCategoryService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventFullDto> findAllEvents(List<Integer> users, List<EventStatus> states, List<Integer> categories,
                                             LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         log.info("Запрос на получение всех событий администратором");
@@ -54,7 +56,6 @@ public class AdminEventServiceImpl implements AdminEventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto updateEvent(int id, UpdateEventAdminRequest updateEventAdminRequest) {
         log.info("Запрос на обновление ивента администратором");
         Event event = eventRepository.findById(id)
@@ -75,7 +76,6 @@ public class AdminEventServiceImpl implements AdminEventService {
                 event.setState(EventStatus.CANCELED);
             }
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (updateEventAdminRequest.getAnnotation() != null) {
             event.setAnnotation(updateEventAdminRequest.getAnnotation());
         }
@@ -87,7 +87,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             event.setDescription(updateEventAdminRequest.getDescription());
         }
         if (updateEventAdminRequest.getEventDate() != null) {
-            LocalDateTime newEventDate = LocalDateTime.parse(updateEventAdminRequest.getEventDate(),formatter);
+            LocalDateTime newEventDate = LocalDateTime.parse(updateEventAdminRequest.getEventDate(),DATE_TIME_FORMATTER);
             if (newEventDate.isAfter(event.getCreatedOn().plusHours(1))) {
                 event.setEventDate(newEventDate);
             } else {

@@ -2,7 +2,6 @@ package ru.yandex.practicum.events.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +25,15 @@ import ru.yandex.practicum.user.service.UserService;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.utils.Constants.DATE_TIME_FORMATTER;
 
 @Service
 @Transactional
 @Slf4j
 @RequiredArgsConstructor
-@ComponentScan()
 public class PrivateEventServiceImpl implements PrivateEventService {
 
     private final EventRepository eventRepository;
@@ -43,6 +42,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     private final LocationService locationService;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortDto> getEvents(int userId, int from, int size) {
         log.info("Запрос на получение всех ивентов от пользователя {}", userId);
         return eventRepository.findEventsByInitiator_Id(
@@ -53,7 +53,6 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto createEvent(int userId, NewEventDto newEventDto) {
         log.info("Запрос на создание ивента от пользователя с id {}", userId);
         Duration eventDuration = Duration.between(
@@ -70,6 +69,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventFullDto getEvent(int userId, int eventId) {
         log.info("Запрос на получение ивента с id {} от пользователя {}", eventId, userId);
         userService.getUserById(userId);
@@ -77,16 +77,14 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    @Transactional
     public EventFullDto updateEvent(int userId, int eventId, UpdateEventUserRequest updateEventUserRequest) {
         log.info("Запрос на обновление ивента с id {} от пользователя {}", eventId, userId);
         userService.getUserById(userId);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Event event = getById(eventId);
         if (event.getState().equals(EventStatus.PENDING) || event.getState().equals(EventStatus.CANCELED)) {
             if (updateEventUserRequest.getEventDate() != null) {
                 Duration eventDuration = Duration.between(
-                        LocalDateTime.now(), LocalDateTime.parse(updateEventUserRequest.getEventDate(), formatter));
+                        LocalDateTime.now(), LocalDateTime.parse(updateEventUserRequest.getEventDate(), DATE_TIME_FORMATTER));
                 if (eventDuration.toMinutes() < Duration.ofMinutes(120).toMinutes()) {
                     throw new ValidationException("Дата и время на которые намечено событие не может быть раньше," +
                             " чем через два часа от текущего момента");
@@ -134,6 +132,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Event getById(int eventId) {
         log.info("Запрос ивента с id {}", eventId);
         return eventRepository.findById(eventId)

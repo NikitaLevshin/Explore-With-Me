@@ -20,14 +20,12 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    @Transactional
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
         log.info("Запрос на создание новой категории");
         return CategoryMapper.toCategoryDto(categoryRepository.save(CategoryMapper.fromCategoryDto(newCategoryDto)));
     }
 
     @Override
-    @Transactional
     public void deleteCategory(int id) {
         log.info("Запрос на удаление категории с id {}", id);
         categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Категория с этим id не найдена"));
@@ -35,7 +33,6 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     }
 
     @Override
-    @Transactional
     public CategoryDto updateCategory(int id, CategoryDto updatedCategory) {
         log.info("Запрос на обновление категории с id {}", id);
         Category category = categoryRepository.findById(id)

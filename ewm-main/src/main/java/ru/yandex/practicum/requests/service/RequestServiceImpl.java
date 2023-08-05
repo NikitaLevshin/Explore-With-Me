@@ -35,6 +35,7 @@ public class RequestServiceImpl implements RequestService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getEventRequests(int userId) {
         log.info("Запрос на получение пользователем {} запросов на участие в ивентах", userId);
         userService.getUserById(userId);
@@ -45,7 +46,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public ParticipationRequestDto createEventRequest(int userId, int eventId) {
         log.info("Запрос на создание пользователем {} запроса на участие в ивенте", userId);
         User user = userService.getUserById(userId);
@@ -97,6 +97,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequests(int userId, int eventId) {
         log.info("Запрос на получение пользователем {} запроса на участие в ивенте с id {}", userId, eventId);
         return requestRepository.findParticipationRequestsByEventsWithRequests_IdAndEventsWithRequests_Initiator_Id(eventId, userId)
@@ -106,7 +107,6 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    @Transactional
     public EventRequestStatusUpdateResult updateRequest(int userId, int eventId, EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         log.info("Запрос на обновление пользователем {} запроса на участие в ивенте", userId);
         List<ParticipationRequest> requests =

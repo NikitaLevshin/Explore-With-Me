@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.StatsClient;
 import ru.yandex.practicum.events.dto.EventFullDto;
 import ru.yandex.practicum.events.dto.EventShortDto;
@@ -21,20 +22,23 @@ import ru.yandex.practicum.exceptions.ValidationException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static ru.yandex.practicum.utils.Constants.DATE_TIME_FORMATTER;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class PublicEventServiceImpl implements PublicEventService {
 
     private final EventRepository eventRepository;
     private final StatsClient statsClient;
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortDto> getAllEvents(String text, List<Integer> categories, Boolean paid,
                                             LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                             Boolean onlyAvailable, EventSort sort, Integer from, Integer size,
@@ -88,6 +92,7 @@ public class PublicEventServiceImpl implements PublicEventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventFullDto getById(int id, HttpServletRequest httpServletRequest) {
         log.info("Запрос ивента с id {}", id);
         Event event = eventRepository.findById(id)
@@ -102,11 +107,10 @@ public class PublicEventServiceImpl implements PublicEventService {
     }
 
     private int getViews(Event event, HttpServletRequest httpServletRequest) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<String> uris = List.of(httpServletRequest.getRequestURI());
         ResponseEntity<Object> response = statsClient.stats(
-                event.getCreatedOn().format(formatter),
-                event.getEventDate().format(formatter),
+                event.getCreatedOn().format(DATE_TIME_FORMATTER),
+                event.getEventDate().format(DATE_TIME_FORMATTER),
                 uris.toArray(new String[0]), true);
         if (response.getStatusCode().equals(HttpStatus.OK)) {
             String[] body = Objects.requireNonNull(response.getBody()).toString().split(" ");

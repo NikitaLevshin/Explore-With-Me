@@ -27,7 +27,6 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     private final EventRepository eventRepository;
 
     @Override
-    @Transactional
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
         log.info("Запрос на создание подборки ивентов");
         List<Event> eventList = new ArrayList<>();
@@ -42,7 +41,6 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     }
 
     @Override
-    @Transactional
     public void deleteCompilation(int id) {
         log.info("Запрос на удаление подборки с id {}", id);
         compilationRepository.findById(id).orElseThrow(
@@ -51,7 +49,6 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     }
 
     @Override
-    @Transactional
     public CompilationDto updateCompilation(int id, UpdateCompilationRequestDto updateCompilationRequestDto) {
         log.info("Запрос на обновление подборки с id {}", id);
         Compilation compilation = compilationRepository.findById(id).orElseThrow(

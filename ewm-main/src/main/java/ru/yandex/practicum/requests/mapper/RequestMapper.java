@@ -6,19 +6,19 @@ import ru.yandex.practicum.requests.dto.ParticipationRequestDto;
 import ru.yandex.practicum.requests.model.ParticipationRequest;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.utils.Constants.DATE_TIME_FORMATTER;
 
 @UtilityClass
 public class RequestMapper {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     public static ParticipationRequestDto toParticipationRequestDto(ParticipationRequest participationRequest) {
         return ParticipationRequestDto.builder()
                 .id(participationRequest.getId())
-                .created(LocalDateTime.parse(participationRequest.getCreated().format(formatter),formatter).toString())
+                .created(LocalDateTime.parse(participationRequest.getCreated()
+                        .format(DATE_TIME_FORMATTER),DATE_TIME_FORMATTER).toString())
                 .event(participationRequest.getEventsWithRequests().getId())
                 .requester(participationRequest.getRequester().getId())
                 .status(participationRequest.getStatus())

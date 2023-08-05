@@ -5,6 +5,7 @@ import ru.yandex.practicum.events.model.Event;
 import ru.yandex.practicum.user.model.User;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
@@ -24,6 +25,7 @@ public class ParticipationRequest {
     private Event eventsWithRequests;
     @ManyToOne
     @JoinColumn(name = "requester_id")
+    @NotNull
     private User requester;
     @Enumerated(EnumType.STRING)
     private RequestEventStatus status;

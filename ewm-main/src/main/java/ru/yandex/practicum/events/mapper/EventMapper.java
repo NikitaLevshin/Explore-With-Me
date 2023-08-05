@@ -12,18 +12,18 @@ import ru.yandex.practicum.user.mapper.UserMapper;
 import ru.yandex.practicum.user.model.User;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import static ru.yandex.practicum.utils.Constants.DATE_TIME_FORMATTER;
 
 @UtilityClass
 public class EventMapper {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static Event fromEventDto(NewEventDto newEventDto, Category category, User user) {
         return Event.builder()
                 .annotation(newEventDto.getAnnotation())
                 .category(category)
                 .confirmedRequests(0)
-                .createdOn(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
+                .createdOn(LocalDateTime.parse(LocalDateTime.now().format(DATE_TIME_FORMATTER), DATE_TIME_FORMATTER))
                 .description(newEventDto.getDescription())
                 .eventDate(newEventDto.getEventDate())
                 .initiator(user)
@@ -43,14 +43,14 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .createdOn(event.getCreatedOn().format(formatter))
+                .createdOn(event.getCreatedOn().format(DATE_TIME_FORMATTER))
                 .description(event.getDescription())
-                .eventDate(event.getEventDate().format(formatter))
+                .eventDate(event.getEventDate().format(DATE_TIME_FORMATTER))
                 .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .location(event.getLocation())
                 .paid(event.isPaid())
                 .participantLimit(event.getParticipantLimit())
-                .publishedOn(event.getPublishedOn().format(formatter))
+                .publishedOn(event.getPublishedOn().format(DATE_TIME_FORMATTER))
                 .requestModeration(event.isRequestModeration())
                 .state(event.getState())
                 .title(event.getTitle())
@@ -64,7 +64,7 @@ public class EventMapper {
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
                 .confirmedRequests(event.getConfirmedRequests())
-                .eventDate(event.getEventDate().format(formatter))
+                .eventDate(event.getEventDate().format(DATE_TIME_FORMATTER))
                 .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .paid(event.isPaid())
                 .title(event.getTitle())

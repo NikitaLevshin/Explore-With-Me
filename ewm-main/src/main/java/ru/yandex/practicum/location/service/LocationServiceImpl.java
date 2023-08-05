@@ -16,7 +16,6 @@ public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
 
     @Override
-    @Transactional
     public Location saveLocation(Location location) {
         log.info("Запрос на сохранение локации");
         return locationRepository.save(location);

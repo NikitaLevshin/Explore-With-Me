@@ -25,13 +25,13 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    @Transactional
     public UserDto create(NewUserRequestDto newUserRequestDto) {
         log.info("Создаем нового пользователя");
         return UserMapper.toUserDto(userRepository.save(UserMapper.fromUserDto(newUserRequestDto)));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getUsers(List<Integer> ids, int from, int size) {
         log.info("Выводим список пользователей с id {}", ids);
         Pageable pageable = PageRequest.of(from / size, size);
@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void deleteUser(int id) {
         log.info("Удаляем пользователя с id {}", id);
         userRepository.findById(id)
@@ -58,6 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserById(int id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден"));
