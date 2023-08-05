@@ -1,3 +1,5 @@
+package ru.yandex.practicum;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -5,30 +7,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.yandex.practicum.RequestDto;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
 public class StatsClient extends BaseClient {
 
+    @Value("${stats-server.url}")
+    private String serverUrl;
+
     @Autowired
-    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatsClient(RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory())
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build()
         );
     }
 
-    public ResponseEntity<Object> hit(RequestDto requestDto) {
-        return post("/hit", null, null, requestDto);
+    public void hit(HttpServletRequest httpServletRequest) {
+        RequestDto requestDto = new RequestDto(
+                "ewm-main-service", httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr(), LocalDateTime.now()
+        );
+        post(serverUrl + "/hit", requestDto);
     }
 
-    public ResponseEntity<Object> stats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
-        return get("stats?start={start}&end={end}&uris={uris}&unique={unique}", null, Map.of(
+    public ResponseEntity<Object> stats(String start, String end, String[] uris, Boolean unique) {
+        return get(serverUrl + "/stats?start={start}&end={end}&uris={uris}&unique={unique}", Map.of(
                 "start", start,
                 "end", end,
                 "uris", uris,
