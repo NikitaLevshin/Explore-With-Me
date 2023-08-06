@@ -16,14 +16,14 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
             "where s.uri in(?3) and creation_date between ?1 and ?2 " +
             "group by s.app, s.uri " +
             "order by count(distinct s.ip) desc ")
-    List<ResponseDto> findByUniqueUri(LocalDateTime start, LocalDateTime end, List uri);
+    List<ResponseDto> findByUniqueUri(LocalDateTime start, LocalDateTime end, List<String> uri);
 
     @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(s.ip)) " +
             "from Stats as s " +
             "where s.uri in(?3) and creation_date between ?1 and ?2 " +
             "group by s.app, s.uri " +
             "order by count(s.ip) desc ")
-    List<ResponseDto> findByUri(LocalDateTime start, LocalDateTime end, List uri);
+    List<ResponseDto> findByUri(LocalDateTime start, LocalDateTime end, List<String> uri);
 
     @Query("select new ru.yandex.practicum.ResponseDto(s.app, s.uri, count(distinct s.ip)) " +
             "from Stats as s " +
