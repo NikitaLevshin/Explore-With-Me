@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.comments.dto.CommentDto;
 import ru.yandex.practicum.comments.dto.NewCommentDto;
 import ru.yandex.practicum.comments.dto.UserCommentDto;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class PrivateCommentServiceImpl implements PrivateCommentService {
 
     private final CommentRepository commentRepository;
@@ -43,6 +45,7 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserCommentDto> getAllByUser(int userId, int from, int size) {
         log.info("Запрос на получение всех комментариев пользователем {}", userId);
         userService.getUserById(userId);
@@ -54,6 +57,7 @@ public class PrivateCommentServiceImpl implements PrivateCommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CommentDto getById(int userId, int commentId) {
         log.info("Запрос на получение комментария от пользователя {} по id {}", userId, commentId);
         userService.getUserById(userId);

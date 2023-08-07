@@ -1,5 +1,6 @@
 package ru.yandex.practicum.comments.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.comments.dto.CommentDto;
 import ru.yandex.practicum.comments.dto.NewCommentDto;
 import ru.yandex.practicum.comments.dto.UserCommentDto;
@@ -9,6 +10,7 @@ import ru.yandex.practicum.user.model.User;
 
 import java.time.LocalDateTime;
 
+@UtilityClass
 public class CommentMapper {
 
     public static CommentDto toCommentDto(Comment comment) {

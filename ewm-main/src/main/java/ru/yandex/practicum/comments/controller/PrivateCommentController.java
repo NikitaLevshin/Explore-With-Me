@@ -32,7 +32,7 @@ public class PrivateCommentController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{userId}/comments")
-    List<UserCommentDto> getAllByUser(@PathVariable int userId,
+    public List<UserCommentDto> getAllByUser(@PathVariable int userId,
                                       @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                       @RequestParam(defaultValue = "10")@Positive int size) {
         return privateCommentService.getAllByUser(userId, from, size);
@@ -40,14 +40,14 @@ public class PrivateCommentController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{userId}/comments/{commentId}")
-    CommentDto getById(@PathVariable int userId,
+    public CommentDto getById(@PathVariable int userId,
                        @PathVariable int commentId) {
         return privateCommentService.getById(userId, commentId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{userId}/comments/{commentId}")
-    CommentDto editComment(@PathVariable int userId,
+    public CommentDto editComment(@PathVariable int userId,
                              @PathVariable int commentId,
                              @RequestBody @Valid NewCommentDto comment) {
         return privateCommentService.editComment(comment, commentId, userId);
@@ -55,7 +55,7 @@ public class PrivateCommentController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{userId}/comments/{commentId}")
-    void deleteComment(@PathVariable int userId,
+    public void deleteComment(@PathVariable int userId,
                        @PathVariable int commentId) {
         privateCommentService.deleteComment(commentId, userId);
     }
